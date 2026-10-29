@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { getAppConfig } from "./lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,10 +13,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "DocuSign - Digital Contract Signing",
-  description: "Sign contracts digitally with ease and security",
-};
+// Render on each request so runtime env vars (APP_URL, APP_NAME) are applied.
+export const dynamic = "force-dynamic";
+
+export function generateMetadata(): Metadata {
+  const { appUrl, appName } = getAppConfig();
+  return {
+    metadataBase: new URL(appUrl),
+    title: `${appName} - Digital Contract Signing`,
+    description: "Sign contracts digitally with ease and security",
+    alternates: { canonical: "/" },
+    openGraph: { url: appUrl, siteName: appName },
+  };
+}
 
 export default function RootLayout({
   children,
